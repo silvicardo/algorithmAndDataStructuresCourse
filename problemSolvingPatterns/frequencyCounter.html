@@ -9,6 +9,8 @@
 
   <script type="text/javascript">
 
+  function ciao(){
+
   const theExample = 'Write a function called same, wich accepts two arrays. The function should return true if every value in the array has it\'s corresponding value squared in the second array. The frequency of values must be the same'
 
     console.log('frequencyPattern - ', theExample);
@@ -163,8 +165,12 @@
 
     same([1,2,3,2,5], [9,1,4,4,11])
 
+  }
+
     //********* EXERCISE **********//
 
+
+    console.log('esercizio');
     /*
     Frequency Counter - validAnagram
     Given two strings, write a function to determine if the second string is an anagram of the first. An anagram is a word, phrase, or name formed by rearranging the letters of another, such as cinema, formed from iceman.
@@ -185,11 +191,101 @@
 
     */
 
-    function validAnagram(){
-      
-      // add whatever parameters you deem necessary - good luck!
+    //MY ATTEMPT
+
+    //THE PROBLEM: check if first word can be reproduced rearranging the order of the letters in word2
+    //EXCEPTIONS TO SKIP: spaces, numbers and words will be already all lowercase
+
+    function validAnagram(word1, word2){
+
+      //using frequency counter logic we create two objects
+      let frequencyCounter1 = {};
+      let frequencyCounter2 = {};
+
+      //they will have key(letter)->(timesThatLetterAppears)
+      for (let letter of word1) {
+        // console.log(letter);
+        //-> create if not found/find a key with current letter
+        //-> its value is (existingCountNumber or 0(if value at key did not still existed)) and add 1
+        frequencyCounter1[letter] = (frequencyCounter1[letter] || 0 ) + 1
+      }
+
+      for (let letter of word2) {
+        // console.log(letter);
+        //-> create if not found/find a key with current letter
+        //-> its value is (existingCountNumber or 0(if value at key did not still existed)) and add 1
+        frequencyCounter2[letter] = (frequencyCounter2[letter] || 0 ) + 1
+      }
+
+      // console.log(frequencyCounter2)
+      // console.log(frequencyCounter1)
+
+      //Check the two objects for EQUALITY
+      for (let letter in frequencyCounter1) {
+
+        //return false if
+        if (!frequencyCounter2.hasOwnProperty(letter) ||   //1. key(letter) from  obj1 does NOT exists in obj2
+            frequencyCounter2[letter] !== frequencyCounter1[letter] ) { //2.value of obj1[letter] is NOT equal to obj2[letter]
+          return false;
+        }
+      }
+
+      //return true if differences were not found
+      return true
 
     }
+
+      console.log(validAnagram('palla', 'lalap')); // true
+      console.log(validAnagram('', '')); // true
+      console.log(validAnagram('aaz', 'zza')); // false
+      console.log(validAnagram('anagram', 'nagaram')); // true
+      console.log(validAnagram("rat","car")) // false));
+      console.log(validAnagram('awesome', 'awesom')); // false
+      console.log(validAnagram('amanaplanacanalpanama', 'acanalmanplanpamana')); // false
+      console.log(validAnagram('qwerty', 'qeywrt')); // true
+      console.log(validAnagram('texttwisttime', 'timetwisttext')); // true
+
+      //********************************************//
+      //********************************************//
+      //********** THE COURSE SOLUTION *************//
+      //********************************************//
+      //********************************************//
+
+      function validAnagram(first, second) {
+
+        //first check look for equal length
+        if (first.length !== second.length) {
+          return false;
+        }
+
+        //create the counter object with keys(letter)->value(timesTheyAppear)
+        const lookup = {};
+
+        for (let i = 0; i < first.length; i++) {
+          let letter = first[i];
+          // if letter exists, increment, otherwise set to 1
+          lookup[letter] ? lookup[letter] += 1 : lookup[letter] = 1;
+        }
+        console.log(lookup)
+
+        //Loop trough second array
+        for (let i = 0; i < second.length; i++) {
+          //current letter
+          let letter = second[i];
+          // can't find letter or letter is zero then it's not an anagram
+          if (!lookup[letter]) {
+            return false;
+          } else {//decrease the value(amountOfTimesLetterAppearInFirstCounterObject)
+            lookup[letter] -= 1;
+          }
+        }
+
+        //if we get here it's an anagram!
+        return true;
+      }
+
+      // {a: 0, n: 0, g: 0, r: 0, m: 0,s:1}
+      validAnagram('anagrams', 'nagaramm')
 
   </script>
 
