@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title>Frequency Pattern</title>
+  </head>
+  <body>
+
+
+  <script type="text/javascript">
+
+  const theExample = 'Write a function called same, wich accepts two arrays. The function should return true if every value in the array has it\'s corresponding value squared in the second array. The frequency of values must be the same'
+
+    console.log('frequencyPattern - ', theExample);
+
+    //THE PROBLEM
+    ////check if every value in array1 is present in array 2 with the same frequency
+
+
+    //MY ATTEMPTS BEFORE THE LECTURE SOLUTION
+
+    //MY FIRST VERSION - OBJECT EQUALITY
+
+    console.log('MY FIRST VERSION');
+
+    function same(array1, array2){
+
+      //CHECK 1 -> check if every val of array1 squared
+      //is in array 2 else return false
+      //This one could be skipped, result of check 2 anyway would return false
+
+      if(!array1.every((num) => array2.includes(num * num))) {
+        return false
+       }
+
+      //CHECK 2 -> check if every val of array1 is in array2
+      // with the same frequency else return false
+
+      //getting the squared value here(with array.map) should give us (just conceptually)
+      //obj1 === obj2
+
+      const array1CountObj = array1.map(num => num * num).reduce((obj, nextNum) => {
+
+        if(obj.hasOwnProperty(nextNum)){
+          obj[nextNum] = obj[nextNum] + 1;
+        } else {
+          obj[nextNum] = 1;
+        }
+        return obj;
+      }, {})
+
+      console.log(array1CountObj);
+
+      const array2CountObj = array2.reduce((obj, nextNum) => {
+         if(obj.hasOwnProperty(nextNum)){
+           obj[nextNum] = obj[nextNum] + 1;
+         } else {
+           obj[nextNum] = 1;
+         }
+        return obj;
+      }, {})
+
+      console.log(array2CountObj);
+
+      //CHECK OBJECTS EQUALITY IF PASS TRUE ELSE FALSE
+
+      for (var key in array2CountObj){
+        if (!array1CountObj.hasOwnProperty(key) && array1CountObj[key] !== array2CountObj[key]){
+          return false
+        }
+      }
+
+      return true;
+
+    }
+
+    //TESTS
+
+    console.log(same([1,2,3],[4,1,9])); //true
+    console.log(same([1,2,3],[1,9])); //false -> 2 alla seconda manca
+    console.log(same([1,2,3],[4,4,1])); //false -> manca 3 alla seconda e 2 alla seconda si ripete due volte
+
+
+    //MY SECOND VERSION - ARRAY EQUALITY
+
+    console.log('MY SECOND VERSION');
+
+    function same(array1, array2){
+
+      //CHECK 1 -> check if every val of array1 is in array2
+      // with the same frequency else return false
+
+      //HOW: get two sorted array with equal values, we do that by
+      //getting the squared values of first array and then sorting both
+      //this should result (just conceptually)
+      //arr1 === arr2
+
+
+      const array1squaredSort = array1.map(num => num * num).sort();
+
+      const array2Sort = array2.sort()
+
+      /* console.log(array1squaredSort);
+      console.log(array2Sort);*/
+
+      //CHECK ARRAY EQUALITY AND RETURN
+      return array1squaredSort.every((num, index) => num === array2Sort[index])
+
+    }
+
+    //TESTS - SECOND VERSION
+
+    console.log(same([1,2,3],[4,1,9])); //true
+    console.log(same([1,2,3,1,2,3],[4,1,9,9,1,4])); //true
+    console.log(same([1,2,3],[1,9])); //false -> 2 alla seconda manca
+    console.log(same([1,2,3],[4,4,1])); //false -> manca 3 alla seconda e 2 alla seconda si ripete due volte
+
+
+    //********************************************//
+    //********************************************//
+    //********** THE COURSE SOLUTION *************//
+    //********************************************//
+    //********************************************//
+
+    function same(arr1, arr2){
+
+        //Check for array.length to be the same
+        if(arr1.length !== arr2.length){
+            return false;
+        }
+
+        //Create two objects
+        let frequencyCounter1 = {}
+        let frequencyCounter2 = {}
+
+        //each one is the result of creating  key(number)->value(nrOfTimesThisNumberIsInTheArray)
+        //apply both for array 1 and 2
+        for(let val of arr1){
+            frequencyCounter1[val] = (frequencyCounter1[val] || 0) + 1
+        }
+        for(let val of arr2){
+            frequencyCounter2[val] = (frequencyCounter2[val] || 0) + 1
+        }
+        console.log(frequencyCounter1);
+        console.log(frequencyCounter2);
+
+        //check the objects for equality
+        for(let key in frequencyCounter1){
+            //if key(numberOfArray1) squared is NOT contained in object from array 2
+            if(!(key ** 2 in frequencyCounter2)){
+                return false
+            }
+
+            //if the value of obj[key] is NOT equal to obj2[key]
+            if(frequencyCounter2[key ** 2] !== frequencyCounter1[key]){
+                return false
+            }
+        }
+
+        //if we exit the loop we return true
+        return true
+    }
+
+    same([1,2,3,2,5], [9,1,4,4,11])
+
+    //********* EXERCISE **********//
+
+    /*
+    Frequency Counter - validAnagram
+    Given two strings, write a function to determine if the second string is an anagram of the first. An anagram is a word, phrase, or name formed by rearranging the letters of another, such as cinema, formed from iceman.
+
+    Examples:
+
+    validAnagram('', '') // true
+    validAnagram('aaz', 'zza') // false
+    validAnagram('anagram', 'nagaram') // true
+    validAnagram("rat","car") // false) // false
+    validAnagram('awesome', 'awesom') // false
+    validAnagram('amanaplanacanalpanama', 'acanalmanplanpamana') // false
+    validAnagram('qwerty', 'qeywrt') // true
+    validAnagram('texttwisttime', 'timetwisttext') // true
+    Note: You may assume the string contains only lowercase alphabets.
+
+    Time Complexity - O(n)
+
+    */
+
+    function validAnagram(){
+      
+      // add whatever parameters you deem necessary - good luck!
+
+    }
+
+  </script>
+
+  </body>
+</html>
