@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title>multiplePointers</title>
+  </head>
+  <body>
+
+
+  <script type="text/javascript">
+
+  const theExample = 'Write a function called sumZero which accepts a sorted array of integers. The function should find the first pair where the sum is zero. Return an array that includes both values that sum to zero or undefind if a pair does not exist'
+
+    console.log('multiplePointers - ', theExample);
+
+    //THE PROBLEM
+    //check if a sorted array includes two identical absolute numbers (-3, 3) and return them if you find them.
+    //otherwise return undefined
+
+    //MY ATTEMPTS BEFORE THE LECTURE SOLUTION
+
+    function sumZeroMyVersion(sortedIntegers){
+
+        //check forEach numbers in the array
+        for(let index = 0; index < sortedIntegers.length; index++){
+
+          let number = sortedIntegers[index];
+          // console.log('checking ' +  number);
+          //if whole array includes a number where sum result is zero
+          //we check the reversed array for that number
+
+          //1. if number is NOT < 0 return undefined
+          //if we are not examinating a negative number there will never
+          //be another one that will sum up to zero
+          if (number >= 0) return undefined
+
+          //2. find the absolute of that negative number
+          let numberToFind = Math.abs(number)
+
+          // console.log('we are looking for ' + numberToFind)
+
+          //to avoid finding the same number we are iterating over
+          //we set it to undefined
+          sortedIntegers[index] = undefined;
+          // console.log('arr without searched number ', sortedIntegers);
+
+          if (sortedIntegers.includes(numberToFind)){
+          //if our input array includes the absolute(alias the positive number)
+          //return both in an array (sorted)
+            return [number, numberToFind];
+        }
+      }
+
+      //else return undefined
+      return undefined
+
+    }
+
+    //TESTS
+    console.log('SumZero - myAttempt');
+    console.log(sumZeroMyVersion([-3, -2, -1, 0, 1, 2, 3])); //[-3, 3]
+    console.log(sumZeroMyVersion([-9, -7, -2, -1, 0, 1, 2, 3])); //[-2, 2]
+    console.log(sumZeroMyVersion([ -2, 0, 1, 3])); // undefined
+    console.log(sumZeroMyVersion([ 1, 2, 3])); //undefined
+
+
+    //********************************************//
+    //********************************************//
+    //********** THE COURSE SOLUTION *************//
+    //********************************************//
+    //********************************************//
+
+    function sumZeroSolution(array){
+
+      //creates two pointers
+      let i = 0 //start of the array
+      let j = array.length - 1 //the end of the array
+
+      //the condition that stops the loop is that i is smaller than j
+      //we have to loop until something happens so we choose a while loop
+      //This prevents hitting 0 or a negative number with j
+      while (i < j) {
+
+        let sum = array[i] + array[j]
+
+        //if sum is 0 return the values as requested
+        if ((sum) === 0) return [array[i] , array[j]]
+
+        //a reason to exit the function is
+        //array[i] === 0, array is ordered so only negative number can provide a sum of 0
+        if (array[i] === 0) return undefined
+
+        //then we have 2 possibilities
+        //result of the sum of the numbers at pointers is
+
+        //1.NEGATIVE
+        if (sum < 0) {
+
+          //i will not be able to find a number[i] that sums to zero
+          //if negative number is BIGGER than positive we need to get a smaller negative
+          //so let's increase i by 1 and go to nex iteration
+          i++
+
+        } else {//2.POSITIVE
+
+          //i will not be able to find a number[j] that sums to zero
+          //if positive number is BIGGER than negative we need to get a smaller positive
+          //so let's decrease j by 1 and go to nex iteration
+          j--
+
+        }
+
+      }
+
+      // return undefined at this point is implicit
+
+    }
+
+    //TESTS
+    console.log('SUMZERO - COURSE SOLUTION');
+    console.log(sumZeroSolution([-3, -2, -1, 0, 1, 2, 3])); //[-3, 3]
+    console.log(sumZeroSolution([-9, -7, -2, -1, 0, 1, 2, 3])); //[-3, 3]
+    console.log(sumZeroSolution([ -2, 0, 1, 3])); // undefined
+    console.log(sumZeroSolution([ 1, 2, 3])); //undefined
+
+    //********* EXERCISE **********//
+
+    console.log('esercizio');
+
+    const exercise = 'Implement a function called countUniqueValues, which accepts a sorted array, and counts the unique values in the array. There can be negative numbers in the array, but it will always be sorted'
+
+    console.log('multiplePointers - ', exercise);
+
+    //THE PROBLEM
+
+    //Using two counters loop a single time over the array returning a count of values that appears just one time
+    //THE INPUT ARRAY WILL ALWAYS BE SORTED
+
+    //MY ATTEMPTS
+
+    //ATTEMPT 1 -> BEFORE THE LECTURE SOLUTION AND HINTS
+
+    function countUniqueValuesNoHints(sortedIntegers){
+
+      //CHECK FOR EDGE CASES
+
+      //1. if we have only one element return count = 1
+      if (sortedIntegers.length === 1) return 1
+
+      //use an index to loop through
+      var checkedIndex = 0;
+
+      //2. if empty array or numbers at the two ends of the array are the same  return count = 0 when array.length is minimum 2
+      if (sortedIntegers.length === 0 || (sortedIntegers[checkedIndex] === sortedIntegers[sortedIntegers.length - 1] && sortedIntegers.length > 1)){
+        return 0
+      }
+
+      //START LOOPING
+
+      //we need a counter
+      var counter = 0
+      //Our objective is to loop just one time in the array
+      //Loop until CHECKED INDEX REACHES THE END of the array
+      while(sortedIntegers[checkedIndex] !== sortedIntegers[sortedIntegers.length - 1]){
+
+        //IF THIS NUMBER IS NOT EQUAL TO THE FOLLOWING INCREASE THE COUNTER
+        if (sortedIntegers[checkedIndex] !== sortedIntegers[checkedIndex + 1]){
+          counter++
+        }
+
+        //index++ for the next iteration
+        checkedIndex++
+
+      }
+
+      //If we are here we are sure that :
+      //-> counter is at least 2(EDGECASEs check)
+      //-> the index we are checking contains a number that equals the last one in the array
+      //so we increment the counter one last time
+      counter ++
+
+      //and return it
+      return counter
+
+    }
+
+    //TESTS
+    console.log('no hints');
+    console.log(countUniqueValuesNoHints([1,1,1,1,1,1,1,2])); //2
+    console.log(countUniqueValuesNoHints([1,2,3,4,4,4,7,7,12,12,13])); // 7
+    console.log(countUniqueValuesNoHints([])); // 0
+    console.log(countUniqueValuesNoHints([-2,-1,-1,0,1])); // 4
+
+    //MY ATTEMPT 2 (BEFORE THE LECTURE SOLUTION with HINTS)
+
+    function countUniqueValuesHints(sortedIntegers){
+
+      //CHECK FOR EDGE CASES
+
+      //1. if we have only one element return count = 1
+      if (sortedIntegers.length === 1) return 1
+
+
+      //2. if empty array or numbers at the two ends of the array are the same  return count = 0 when array.length is minimum 2
+      if (sortedIntegers.length === 0 ||
+        (sortedIntegers[0] === sortedIntegers[sortedIntegers.length - 1] && sortedIntegers.length > 1))
+        {
+        return 0
+      }
+
+      //use two pointers,
+      //-> i will be used to keep track of how many unique numbers where in the array
+      //-> j will proceed at each iteration to check a new position in the array
+      var i = 0;
+      var j = 1
+
+      //START LOOPING
+
+      //we loop through until j is not equal to the index representing the end of the array
+      while (j < sortedIntegers.length){
+
+        //at each iteration....
+
+        //- if numbers at both pointers are the same
+
+        if (sortedIntegers[j] === sortedIntegers[i]) {
+
+          //j advances one step for the next iteration
+          j++
+
+        } else {//if numbers at both pointers are DIFFERENT
+
+          //i increases by one and stores at the new index the value of the new number(array[j])
+          i++;
+          sortedIntegers[i] = sortedIntegers[j]
+          j++;
+
+        }
+
+      }
+
+      //and return it plus 1(i start from 0 and we want to count from 1)
+      return i + 1
+
+    }
+
+    //TESTS
+    console.log('with hints');
+    console.log(countUniqueValuesHints([1,1,1,1,1,1,1,2])); //2
+    console.log(countUniqueValuesHints([1,2,3,4,4,4,7,7,12,12,13])); // 7
+    console.log(countUniqueValuesHints([])); // 0
+    console.log(countUniqueValuesHints([-2,-1,-1,0,1])); // 4
+
+
+    //********************************************//
+    //********************************************//
+    //********** THE COURSE SOLUTION *************//
+    //********************************************//
+    //********************************************//
+
+    function countUniqueValuesSolution(arr) {
+
+      //if array is empty return 0 count
+      if(arr.length === 0) return 0;
+
+      //pointers that keep track of the unique numbers
+      var i = 0
+
+      //we iterate anyway through the whole array and use
+      //as the second pointer the index of the current iteration
+      for (let j = 0; j < arr.length; j++) {
+
+          //CASE numbers at two pointers are DIFFERENT
+          if (arr[i] !== arr[j]) {
+            //i "advances" 1 position and stores arr[j] number
+            i++;
+            arr[i] = arr[j]
+          }
+          //CASE numbers at two pointers are THE SAME
+          //we do nothing, loop continues and j gets +1
+
+
+      }
+
+      //and return it plus 1(i start from 0 and we want to count from 1)
+      return i + 1
+
+    }
+
+
+    //TESTS
+    console.log('course solution');
+    console.log(countUniqueValuesSolution([1,1,1,1,1,1,1,2])); //2
+    console.log(countUniqueValuesSolution([1,2,3,4,4,4,7,7,12,12,13])); // 7
+    console.log(countUniqueValuesSolution([])); // 0
+    console.log(countUniqueValuesSolution([-2,-1,-1,0,1])); // 4
+
+
+  </script>
+
+  </body>
+</html>
